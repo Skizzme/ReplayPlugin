@@ -1,0 +1,13 @@
+name: ReplayPlugin
+version: BETA
+author: Skizzme
+main: dev.skizzme.replayplugin.ReplayPlugin
+description: col
+load: STARTUP
+api-version: 1.13
+
+commands:
+  testnpccommand:
+    description: cool npc command
+  replay:
+    description: commands for replays
