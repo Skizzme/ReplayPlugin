@@ -1,16 +1,14 @@
 package dev.skizzme.replayplugin.replayer;
 
-import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import dev.skizzme.replayplugin.Packet;
-import dev.skizzme.replayplugin.http.HttpRequest;
 import dev.skizzme.replayplugin.packets.IReplayPacket;
 import dev.skizzme.replayplugin.packets.impl.BlockPlacePacket;
 import dev.skizzme.replayplugin.packets.impl.HeldItemChangePacket;
 import dev.skizzme.replayplugin.actions.*;
 import dev.skizzme.replayplugin.actions.impl.*;
-import dev.skizzme.replayplugin.ncp.PlayerNPC;
+import dev.skizzme.replayplugin.npc.PlayerNPC;
 import dev.skizzme.replayplugin.util.RandomUtil;
 import dev.skizzme.replayplugin.util.Timer;
 import dev.skizzme.replayplugin.util.Util;
@@ -24,7 +22,6 @@ import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

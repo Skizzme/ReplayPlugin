@@ -1,4 +1,4 @@
-package dev.skizzme.replayplugin.ncp;
+package dev.skizzme.replayplugin.npc;
 
 import com.mojang.authlib.GameProfile;
 import dev.skizzme.replayplugin.ReplayPlugin;

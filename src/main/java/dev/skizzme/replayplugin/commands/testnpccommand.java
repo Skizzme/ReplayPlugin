@@ -1,23 +1,16 @@
 package dev.skizzme.replayplugin.commands;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import dev.skizzme.replayplugin.ReplayPlugin;
-import dev.skizzme.replayplugin.ncp.PlayerNPC;
-import dev.skizzme.replayplugin.util.Util;
-import net.minecraft.server.level.EntityPlayer;
+import dev.skizzme.replayplugin.npc.PlayerNPC;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.util.Arrays;
-import java.util.Properties;
 import java.util.UUID;
 
 public class testnpccommand implements CommandExecutor {

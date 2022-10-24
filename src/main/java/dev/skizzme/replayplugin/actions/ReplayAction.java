@@ -1,6 +1,6 @@
 package dev.skizzme.replayplugin.actions;
 
-import dev.skizzme.replayplugin.ncp.PlayerNPC;
+import dev.skizzme.replayplugin.npc.PlayerNPC;
 import org.bukkit.entity.Player;
 
 public abstract class ReplayAction {

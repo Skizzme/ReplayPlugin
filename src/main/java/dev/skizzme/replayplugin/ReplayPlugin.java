@@ -4,11 +4,10 @@ import dev.skizzme.replayplugin.commands.ReplayCommand;
 import dev.skizzme.replayplugin.commands.testnpccommand;
 import dev.skizzme.replayplugin.listeners.ClickListener;
 import dev.skizzme.replayplugin.listeners.PacketListener;
-import dev.skizzme.replayplugin.ncp.PlayerNPC;
+import dev.skizzme.replayplugin.npc.PlayerNPC;
 import dev.skizzme.replayplugin.wrapper.ConfigWrapper;
 import io.github.retrooper.packetevents.PacketEvents;
 import io.github.retrooper.packetevents.utils.server.ServerVersion;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;

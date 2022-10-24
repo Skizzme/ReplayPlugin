@@ -1,7 +1,7 @@
 package dev.skizzme.replayplugin.actions.impl;
 
 import dev.skizzme.replayplugin.actions.ReplayAction;
-import dev.skizzme.replayplugin.ncp.PlayerNPC;
+import dev.skizzme.replayplugin.npc.PlayerNPC;
 import org.bukkit.entity.Player;
 
 public class RotationAction extends ReplayAction {
