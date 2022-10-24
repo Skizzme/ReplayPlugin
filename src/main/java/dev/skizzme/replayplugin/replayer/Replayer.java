@@ -1,13 +1,10 @@
 package dev.skizzme.replayplugin.replayer;
 
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import dev.skizzme.replayplugin.Packet;
-import dev.skizzme.replayplugin.ReplayPlugin;
 import dev.skizzme.replayplugin.http.HttpRequest;
-import dev.skizzme.replayplugin.http.HttpResponse;
 import dev.skizzme.replayplugin.packets.IReplayPacket;
 import dev.skizzme.replayplugin.packets.impl.BlockPlacePacket;
 import dev.skizzme.replayplugin.packets.impl.HeldItemChangePacket;
@@ -19,23 +16,14 @@ import dev.skizzme.replayplugin.util.Timer;
 import io.github.retrooper.packetevents.packetwrappers.play.in.entityaction.WrappedPacketInEntityAction;
 import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
 import io.github.retrooper.packetevents.packetwrappers.play.out.updatehealth.WrappedPacketOutUpdateHealth;
-import io.github.retrooper.packetevents.utils.player.Skin;
 import net.minecraft.server.level.EntityPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.craftbukkit.v1_17_R1.CraftWorld;
 import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -77,7 +65,7 @@ public class Replayer {
     protected void worldCreated() {
         Location tpLoc = viewer.getLocation();
         tpLoc.setWorld(world);
-//        viewer.teleport(tpLoc);
+        viewer.teleport(tpLoc);
         replayController.giveControlsToViewer();
         createNPCs(this.packets);
         this.actions = parseActions(this.packets);
@@ -91,10 +79,11 @@ public class Replayer {
                 PlayerNPC npc = new PlayerNPC(new GameProfile(UUID.randomUUID(), p.getName() + "_" + RandomUtil.randomString(4)), ((CraftWorld)world).getHandle());
                 npcMap.put(p, npc);
                 npc.addPlayer(viewer);
+                npc.setLocation(viewer.getLocation());
 
                 String[] skin = getSkinProperties(p.getUniqueId().toString());
                 if (skin != null)
-                    npc.entityNCP.getProfile().getProperties().put("textures", new Property("textures", skin[0], skin[1]));
+                    npc.entityNPC.getProfile().getProperties().put("textures", new Property("textures", skin[0], skin[1]));
             }
         }
     }
@@ -140,16 +129,17 @@ public class Replayer {
             boolean isFillerAction = true;
             if (packet.isC03()) {
                 WrappedPacketInFlying wrapper = new WrappedPacketInFlying(packet.getRawPacket());
+                System.out.println(wrapper.getPosition().toString());
                 if (wrapper.isRotating() && !wrapper.isMoving()) {
                     actions.add(new RotationAction(wrapper.getYaw(), wrapper.getPitch(), npc, replayPacket.delay, replayPacket.player, replayTime));
                     isFillerAction = false;
                 }
                 if (wrapper.isRotating() && wrapper.isMoving()) {
-                    actions.add(new MoveAction(wrapper.getX(), wrapper.getY(), wrapper.getZ(), wrapper.getYaw(), wrapper.getPitch(), wrapper.isOnGround(), npc, replayPacket.delay, replayPacket.player, replayTime));
+                    actions.add(new MoveAction(wrapper.getPosition().x, wrapper.getPosition().y, wrapper.getPosition().z, wrapper.getYaw(), wrapper.getPitch(), wrapper.isOnGround(), npc, replayPacket.delay, replayPacket.player, replayTime));
                     isFillerAction = false;
                 }
-                if (wrapper.isMoving() && !wrapper.isRotating()) {
-                    actions.add(new MoveAction(wrapper.getX(), wrapper.getY(), wrapper.getZ(), wrapper.isOnGround(), npc, replayPacket.delay, replayPacket.player, replayTime));
+                if (!wrapper.isRotating() && wrapper.isMoving()) {
+                    actions.add(new MoveAction(wrapper.getPosition().x, wrapper.getPosition().y, wrapper.getPosition().z, wrapper.isOnGround(), npc, replayPacket.delay, replayPacket.player, replayTime));
                     isFillerAction = false;
                 }
             }
@@ -226,15 +216,20 @@ public class Replayer {
             while (true) {
                 try {
                     ReplayAction a = actionQueue.take();
-                    EntityPlayer npc = a.npc.entityNCP;
+                    EntityPlayer npc = a.npc.entityNPC;
                     if (a instanceof MoveAction) {
                         MoveAction action = (MoveAction)a;
-                        action.npc.moveEntity(new Location(viewer.getWorld(), action.x, action.y, action.z, npc.getHeadRotation(), (float) npc.getHeadY()), action.onGround);
+//                        action.npc.moveEntity(new Location(viewer.getWorld(), action.x, action.y, action.z, npc.getHeadRotation(), (float) npc.getHeadY()), action.onGround);
                         if (action.rotating) {
-                            action.npc.rotateEntity(action.yaw, action.pitch);
+                            System.out.println("MOVELOOK");
+                            action.npc.moveAndRotateEntity(new Location(viewer.getWorld(), action.x, action.y, action.z, (float) action.yaw, (float) action.pitch), action.onGround);
+                        } else {
+                            System.out.println("MOVE");
+                            action.npc.moveEntity(new Location(viewer.getWorld(), action.x, action.y, action.z, npc.getHeadRotation(), (float) npc.getHeadY()), action.onGround);
                         }
                     }
                     if (a instanceof RotationAction) {
+                        System.out.println("LOOK");
                         RotationAction action = (RotationAction)a;
                         action.npc.rotateEntity(action.yaw, action.pitch);
                     }
@@ -283,64 +278,6 @@ public class Replayer {
         });
         this.runThread.setName("ReplayRunThread");
         this.runThread.start();
-//        new BukkitRunnable() {
-//            public void run() {
-//                int index = 0;
-//                while (state != ReplayState.ENDED) {
-//                    try {
-////                        plug
-//                        ReplayAction a = actionQueue.take();
-//                        EntityPlayer npc = a.npc.entityNCP;
-//                        if (a instanceof MoveAction) {
-//                            MoveAction action = (MoveAction)a;
-//                            action.npc.moveEntity(new Location(action.player.getWorld(), action.x, action.y, action.z, npc.yaw, npc.pitch), action.onGround);
-//                            if (action.rotating) {
-//                                action.npc.rotateEntity(action.yaw, action.pitch);
-//                            }
-//                        }
-//                        if (a instanceof RotationAction) {
-//                            RotationAction action = (RotationAction)a;
-//                            action.npc.rotateEntity(action.yaw, action.pitch);
-//                        }
-//                        if (a instanceof HeldItemAction) {
-//                            HeldItemAction action = (HeldItemAction)a;
-//                            CraftPlayer player = (CraftPlayer) viewer;
-//                            npc.getBukkitEntity().getPlayer().setItemInHand(action.item);
-//                            player.getHandle().playerConnection.sendPacket(new PacketPlayOutEntityMetadata(npc.getId(), npc.getDataWatcher(), false));
-//                        }
-//                        if (a instanceof SimpleAction) {
-//                            SimpleAction action = (SimpleAction)a;
-//                            if (action.actionType == SimpleAction.ActionType.SWING) {
-//                                a.npc.swingArm();
-//                            }
-//                            if (action.actionType == SimpleAction.ActionType.RESPAWN) {
-//                                a.npc.showToPlayers();
-//                            }
-//                            if (action.actionType == SimpleAction.ActionType.START_SNEAK || action.actionType == SimpleAction.ActionType.STOP_SNEAK) {
-//                                a.npc.setSneaking(action.actionType == SimpleAction.ActionType.START_SNEAK);
-//                            }
-//                        }
-//                        if (a instanceof BlockPlaceAction) {
-//                            BlockPlaceAction action = (BlockPlaceAction)a;
-//                            world.getBlockAt(action.location).setType(action.material);
-//                        }
-//                        if (a instanceof HealthUpdateAction) {
-//                            if (((HealthUpdateAction) a).isDamage) {
-//                                a.npc.damageEntity(((HealthUpdateAction) a).health);
-//                            }else{
-//                                a.npc.setHealth(((HealthUpdateAction) a).health);
-//                            }
-//                        }
-//                        index += state != ReplayState.SKIP_BACKWARD ? 1 : -1;
-//                        replayController.handleIndex(index);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    } catch (Exception e) {
-//                        e.printStackTrace();;
-//                    }
-//                }
-//            }
-//        }.runTask(ReplayPlugin.INSTANCE);
     }
 
 }

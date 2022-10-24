@@ -29,7 +29,7 @@ public class ReplayCommand implements CommandExecutor {
             if (subC.equals("play")) {
                 if (replayPlugin.replayManager.hasReplay(player)) {
                     player.sendMessage("You are already in a replay!");
-                }else{
+                } else {
                     player.sendMessage("Creating replay");
                     System.out.println(PacketHandler.packets.size());
                     Replayer replayer = new Replayer(PacketHandler.packets, player);
@@ -42,7 +42,7 @@ public class ReplayCommand implements CommandExecutor {
                 }
             }
             if (subC.equals("end")) {
-                replayPlugin.replayManager.getReplay(player).replayController.end();
+//                replayPlugin.replayManager.getReplay(player).replayController.end();
                 replayPlugin.replayManager.removePlayer(player);
                 player.sendMessage("Ended replay");
             }

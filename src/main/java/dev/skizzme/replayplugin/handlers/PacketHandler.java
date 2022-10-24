@@ -52,7 +52,7 @@ public class PacketHandler {
             if (packet.isUseItem()) {
                 WrappedPacketInBlockPlace wrapper = new WrappedPacketInBlockPlace(packet.getRawPacket());
                 Material itemMaterial = event.getPlayer().getItemInHand().getType();
-                if ((itemMaterial == Material.PLAYER_HEAD || itemMaterial == Material.GRAY_DYE || itemMaterial == Material.LIME_DYE) && ReplayPlugin.INSTANCE.replayManager.hasReplay(event.getPlayer())) {
+                if ((itemMaterial == Material.PLAYER_HEAD || itemMaterial == Material.GRAY_DYE || itemMaterial == Material.LIME_DYE || itemMaterial == Material.BARRIER) && ReplayPlugin.INSTANCE.replayManager.hasReplay(event.getPlayer())) {
                     ReplayPlugin.INSTANCE.replayManager.getReplay(event.getPlayer()).replayController.handleControl(event.getPlayer().getItemInHand().getItemMeta().getDisplayName());
                 }
             }

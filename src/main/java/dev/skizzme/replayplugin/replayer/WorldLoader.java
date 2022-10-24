@@ -23,6 +23,7 @@ public class WorldLoader {
     
     public void createWorld() {
         this.worldThread = new Thread(() -> {
+            replay.viewer.getWorld().save();
             replay.world = this.copyWorld(replay.viewer.getWorld(), "ReplayWorld-" + RandomUtil.randomString(4));
             replay.worldCreated();
             worldThread.stop();

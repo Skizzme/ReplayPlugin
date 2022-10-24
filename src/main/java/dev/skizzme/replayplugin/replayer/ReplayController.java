@@ -2,7 +2,10 @@ package dev.skizzme.replayplugin.replayer;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
+import dev.skizzme.replayplugin.ReplayManager;
+import dev.skizzme.replayplugin.ReplayPlugin;
 import dev.skizzme.replayplugin.actions.ReplayAction;
+import dev.skizzme.replayplugin.util.ItemUtil;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -45,7 +48,7 @@ public class ReplayController {
 
     public void end() {
         replay.state = ReplayState.ENDED;
-//        replay.runThread.stop();
+        replay.runThread.stop();
         replay.queueThread.stop();
         restoreInventory();
         for (Player player : replay.npcMap.keySet()) {
@@ -60,7 +63,7 @@ public class ReplayController {
         if (itemName.equals("\247cDecrease Speed")) {
             replay.replaySpeed *= 1.25;
         }
-        if (itemName.equals("\247cIncrease Speed")) {
+        if (itemName.equals("\2479Increase Speed")) {
             replay.replaySpeed /= 1.25;
         }
 
@@ -94,6 +97,12 @@ public class ReplayController {
             stateController.setItemMeta(meta);
             replay.viewer.getInventory().setItem(4, stateController);
         }
+        System.out.println(itemName + ", " + itemName.equals("\247cExit"));
+        if (itemName.equals("\247cExit")) {
+            replay.replayController.end();
+            ReplayPlugin.INSTANCE.replayManager.removePlayer(replay.viewer);
+            this.end();
+        }
     }
 
     public void copyInventory() {
@@ -122,7 +131,8 @@ public class ReplayController {
         stateController.setItemMeta(meta);
         inventory.setItem(4, stateController);
         inventory.setItem(5, getSkull("\247aSkip forward (2s)", "http://textures.minecraft.net/texture/db2f30502a8fe4c80e883d23b47389b03a7818d9bbad2ba4dc10d653d3eb52b2"));
-        inventory.setItem(6, getSkull("\247cIncrease Speed", "http://textures.minecraft.net/texture/cf3821aab0a5abfe7f4937ac28ec8e31a3360cb515c11046ff750ae2a0a391af"));
+        inventory.setItem(6, getSkull("\2479Increase Speed", "http://textures.minecraft.net/texture/cf3821aab0a5abfe7f4937ac28ec8e31a3360cb515c11046ff750ae2a0a391af"));
+        inventory.setItem(8, ItemUtil.createItem(Material.BARRIER, 1, "\247cExit"));
     }
 
     private ItemStack getSkull(String name, String url) {
