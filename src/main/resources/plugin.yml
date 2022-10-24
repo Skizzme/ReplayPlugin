@@ -2,7 +2,7 @@ name: ReplayPlugin
 version: BETA
 author: Skizzme
 main: dev.skizzme.replayplugin.ReplayPlugin
-description: col
+description: Plugin for replaying player's actions
 load: STARTUP
 api-version: 1.13
 

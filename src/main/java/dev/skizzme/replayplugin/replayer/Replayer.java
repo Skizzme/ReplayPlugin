@@ -13,6 +13,7 @@ import dev.skizzme.replayplugin.actions.impl.*;
 import dev.skizzme.replayplugin.ncp.PlayerNPC;
 import dev.skizzme.replayplugin.util.RandomUtil;
 import dev.skizzme.replayplugin.util.Timer;
+import dev.skizzme.replayplugin.util.Util;
 import io.github.retrooper.packetevents.packetwrappers.play.in.entityaction.WrappedPacketInEntityAction;
 import io.github.retrooper.packetevents.packetwrappers.play.in.flying.WrappedPacketInFlying;
 import io.github.retrooper.packetevents.packetwrappers.play.out.updatehealth.WrappedPacketOutUpdateHealth;
@@ -81,23 +82,11 @@ public class Replayer {
                 npc.addPlayer(viewer);
                 npc.setLocation(viewer.getLocation());
 
-                String[] skin = getSkinProperties(p.getUniqueId().toString());
+                String[] skin = Util.getSkinProperties(p.getUniqueId().toString());
                 if (skin != null)
                     npc.entityNPC.getProfile().getProperties().put("textures", new Property("textures", skin[0], skin[1]));
             }
         }
-    }
-
-    private String[] getSkinProperties(String uuid) {
-        HttpRequest request = new HttpRequest("https://sessionserver.mojang.com/session/minecraft/profile/" + uuid.replace("-", "") + "?unsigned=false");
-        try {
-            request.createConnection("GET");
-            JsonObject response = request.sendRequest().getData().getAsJsonObject().get("properties").getAsJsonArray().get(0).getAsJsonObject();
-            return new String[] {response.get("value").getAsString(), response.get("signature").getAsString()};
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
     public void showNPCs() {
