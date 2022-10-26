@@ -3,16 +3,11 @@ package dev.skizzme.replayplugin.commands;
 import dev.skizzme.replayplugin.ReplayPlugin;
 import dev.skizzme.replayplugin.handlers.PacketHandler;
 import dev.skizzme.replayplugin.inventory.GuiInventory;
-import dev.skizzme.replayplugin.replayer.Replayer;
-import dev.skizzme.replayplugin.util.RandomUtil;
-import net.minecraft.server.level.EntityPlayer;
-import org.bukkit.Location;
+import dev.skizzme.replayplugin.replay.replayer.Replayer;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class ReplayCommand implements CommandExecutor {

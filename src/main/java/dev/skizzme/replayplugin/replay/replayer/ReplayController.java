@@ -1,8 +1,7 @@
-package dev.skizzme.replayplugin.replayer;
+package dev.skizzme.replayplugin.replay.replayer;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import dev.skizzme.replayplugin.ReplayManager;
 import dev.skizzme.replayplugin.ReplayPlugin;
 import dev.skizzme.replayplugin.actions.ReplayAction;
 import dev.skizzme.replayplugin.util.ItemUtil;

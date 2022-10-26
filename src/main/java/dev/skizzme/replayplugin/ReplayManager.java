@@ -1,6 +1,6 @@
 package dev.skizzme.replayplugin;
 
-import dev.skizzme.replayplugin.replayer.Replayer;
+import dev.skizzme.replayplugin.replay.replayer.Replayer;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;

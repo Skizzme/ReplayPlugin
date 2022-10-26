@@ -1,4 +1,4 @@
-package dev.skizzme.replayplugin.replayer;
+package dev.skizzme.replayplugin.replay.replayer;
 
 import dev.skizzme.replayplugin.actions.ReplayAction;
 import dev.skizzme.replayplugin.actions.impl.BlockPlaceAction;

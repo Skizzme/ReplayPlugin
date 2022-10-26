@@ -1,4 +1,4 @@
-package dev.skizzme.replayplugin.replayer;
+package dev.skizzme.replayplugin.replay.replayer;
 
 public enum ReplayState {
 
